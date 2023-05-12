@@ -35,6 +35,27 @@ public class RecoverEmailTests
     }      
     
     [Fact]
+    public async void RecoverEmail_WhenUserRecover_EmailShouldContainLink()
+    {
+        // Arrange
+        var user = new UserModel("Andrey", "sharkadi.a@gmail.com");
+
+        await using var application = new PasswordServiceApp();
+
+        var userService = application.Services.GetRequiredService<IUserService>();
+        await userService.CreateUser(user);
+        
+        using var client = application.CreateClient();
+
+        // Act
+        var response = await client.PostAsync($"/recover/byEmail/{user.Email}", default);
+  
+        // Assert
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        application.ReceiverEmails.Single().HtmlBody.ShouldContain($"/login/temp/{user.Email}/{application.AuthTokens.Single()}");
+    }
+    
+    [Fact]
     public async void RecoverEmail_WhenMultipleRequestsSent_ShouldSucceed()
     {
         // Arrange

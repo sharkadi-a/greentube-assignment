@@ -30,6 +30,26 @@ public class TempAuthTests
     }     
     
     [Fact]
+    public async void TempAuth_WhenInvalidEmail_ShouldFail()
+    {
+        // Arrange
+        var user = new UserModel("Andrey", "sharkadi.a\t\t@gmail.com");
+
+        await using var application = new PasswordServiceApp();
+
+        var userService = application.Services.GetRequiredService<IUserService>();
+        await userService.CreateUser(user);
+        
+        using var client = application.CreateClient();
+
+        // Act
+        var response = await client.PostAsync($"/login/temp/{user.Email}/SOMETOKEN", default);
+        
+        // Assert
+        response.IsSuccessStatusCode.ShouldBeFalse();
+    }  
+    
+    [Fact]
     public async void TempAuth_WhenTokenLifetimeIsNotExpired_ShouldFail()
     {
         // Arrange
