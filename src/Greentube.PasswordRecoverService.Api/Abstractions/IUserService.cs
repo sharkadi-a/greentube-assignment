@@ -4,6 +4,6 @@ namespace Greentube.PasswordService.Api.Abstractions;
 
 public interface IUserService
 {
-    Task<UserModel> CreateUser(string name, string email);
+    Task<UserModel> CreateUser(UserModel user);
     Task<UserModel> GetUserByEmail(string email);
 }

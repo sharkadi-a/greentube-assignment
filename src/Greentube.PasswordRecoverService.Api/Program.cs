@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddMemoryCache();
-builder.Services.AddScoped<IUserService, SimpeUserService>();
+builder.Services.AddSingleton<IUserService, SimpeUserService>();
 builder.Services.AddScoped<IAuthService, SimpleAuthService>();
 builder.Services.AddScoped<IEmailFactory, SimpleEmailFactory>();
 builder.Services.AddScoped<IEmailService, SimpleEmailService>();
@@ -38,3 +38,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//public partial class Program { }

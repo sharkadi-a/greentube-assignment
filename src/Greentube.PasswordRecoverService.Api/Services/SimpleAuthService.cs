@@ -16,7 +16,7 @@ public class SimpleAuthService : IAuthService
     
     public async Task TempAuth(UserModel user, string tempToken)
     {
-        if (! await _passwordService.VerifyToken(tempToken, user.Email))
+        if (! await _passwordService.VerifyTokenOnce(tempToken, user.Email))
         {
             throw new InvalidTempAuthToken();
         }

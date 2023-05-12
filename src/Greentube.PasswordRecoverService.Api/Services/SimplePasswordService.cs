@@ -26,10 +26,12 @@ public class SimplePasswordService : IPasswordService
         return Task.FromResult(token);
     }
 
-    public Task<bool> VerifyToken(string token, string email)
+    public Task<bool> VerifyTokenOnce(string token, string email)
     {
-        var actualToken = _memoryCache.Get<string>(email);
-        return Task.FromResult(!string.IsNullOrEmpty(actualToken) && actualToken == token);
+        var result = _memoryCache.TryGetValue<string>(email, out var actualToken) &&
+                     !string.IsNullOrEmpty(actualToken) && actualToken == token;
+
+        return Task.FromResult(result);
     }
 
     private string GenerateToken()

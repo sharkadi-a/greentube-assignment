@@ -8,9 +8,8 @@ public class SimpeUserService : IUserService
 {
     private readonly ISet<UserModel> _users = new HashSet<UserModel>();
 
-    public Task<UserModel> CreateUser(string name, string email)
+    public Task<UserModel> CreateUser(UserModel user)
     {
-        var user = new UserModel(name, email);
         _users.Add(user);
 
         return Task.FromResult(user);
