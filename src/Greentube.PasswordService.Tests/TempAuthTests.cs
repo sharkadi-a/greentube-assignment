@@ -1,5 +1,6 @@
 ﻿using Greentube.PasswordService.Api.Abstractions;
 using Greentube.PasswordService.Api.Models;
+using Greentube.PasswordService.Api.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -26,6 +27,59 @@ public class TempAuthTests
         
         // Assert
         response.IsSuccessStatusCode.ShouldBeTrue();
+    }     
+    
+    [Fact]
+    public async void TempAuth_WhenTokenLifetimeIsNotExpired_ShouldFail()
+    {
+        // Arrange
+        var user = new UserModel("Andrey", "sharkadi.a@gmail.com");
+        var options = new PasswordOptions()
+        {
+            ResetPasswordTokenLifetime = TimeSpan.FromSeconds(1),
+            ResetTokenLength = 15
+        };
+
+        await using var application = new PasswordServiceApp(options);
+
+        var userService = application.Services.GetRequiredService<IUserService>();
+        await userService.CreateUser(user);
+        
+        using var client = application.CreateClient();
+
+        // Act
+        await client.PostAsync($"/recover/byEmail/{user.Email}", default);
+        var response = await client.PostAsync($"/login/temp/{user.Email}/{application.AuthTokens.Single()}", default);
+        
+        // Assert
+        response.IsSuccessStatusCode.ShouldBeTrue();
+    }      
+    
+    [Fact]
+    public async void TempAuth_WhenLinkExpiredAfter500Ms_ShouldFail()
+    {
+        // Arrange
+        var user = new UserModel("Andrey", "sharkadi.a@gmail.com");
+        var options = new PasswordOptions()
+        {
+            ResetPasswordTokenLifetime = TimeSpan.FromMilliseconds(500),
+            ResetTokenLength = 15
+        };
+
+        await using var application = new PasswordServiceApp(options);
+
+        var userService = application.Services.GetRequiredService<IUserService>();
+        await userService.CreateUser(user);
+        
+        using var client = application.CreateClient();
+
+        // Act
+        await client.PostAsync($"/recover/byEmail/{user.Email}", default);
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        var response = await client.PostAsync($"/login/temp/{user.Email}/{application.AuthTokens.Single()}", default);
+        
+        // Assert
+        response.IsSuccessStatusCode.ShouldBeFalse();
     }      
     
     [Fact]

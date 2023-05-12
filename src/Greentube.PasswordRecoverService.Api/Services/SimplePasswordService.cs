@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Greentube.PasswordService.Api.Services;
 
-public class SimplePasswordService : IPasswordService
+internal class SimplePasswordService : IPasswordService
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IOptions<PasswordOptions> _options;
@@ -18,10 +18,10 @@ public class SimplePasswordService : IPasswordService
         _options = options;
     }
 
-    public Task<string> GenerateResetToken(UserModel user)
+    public Task<string> GenerateTemporaryToken(UserModel user)
     {
         var token = GenerateToken();
-        _memoryCache.Set(user.Email, token, _options.Value.ResetPasswordLifetime);
+        _memoryCache.Set(user.Email, token, _options.Value.ResetPasswordTokenLifetime);
         
         return Task.FromResult(token);
     }

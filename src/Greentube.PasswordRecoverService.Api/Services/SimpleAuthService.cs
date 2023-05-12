@@ -4,7 +4,7 @@ using Greentube.PasswordService.Api.Models;
 
 namespace Greentube.PasswordService.Api.Services;
 
-public class SimpleAuthService : IAuthService
+internal class SimpleAuthService : IAuthService
 {
     private readonly IPasswordService _passwordService;
 

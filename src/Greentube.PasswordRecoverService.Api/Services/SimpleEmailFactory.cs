@@ -3,7 +3,7 @@ using Greentube.PasswordService.Api.Models;
 
 namespace Greentube.PasswordService.Api.Services;
 
-public class SimpleEmailFactory : IEmailFactory
+internal class SimpleEmailFactory : IEmailFactory
 {
     private const string ResetPasswordTemplate =
         "<!DOCTYPE html><html><head><title>Login to Change Password</title></head>" +

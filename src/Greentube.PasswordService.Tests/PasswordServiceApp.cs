@@ -14,6 +14,9 @@ namespace Greentube.PasswordService.Tests;
 
 internal class PasswordServiceApp : WebApplicationFactory<Program>
 {
+    private readonly PasswordOptions? _customOptions;
+    private List<EmailMessageModel> _emailMessageModels = new();
+
     private class PasswordServiceWrapper : IPasswordService
     {
         private readonly IPasswordService _passwordServiceImplementation;
@@ -25,9 +28,9 @@ internal class PasswordServiceApp : WebApplicationFactory<Program>
             _tokens = tokens;
         }
 
-        public async Task<string> GenerateResetToken(UserModel user)
+        public async Task<string> GenerateTemporaryToken(UserModel user)
         {
-            var resetToken = await _passwordServiceImplementation.GenerateResetToken(user);
+            var resetToken = await _passwordServiceImplementation.GenerateTemporaryToken(user);
             _tokens.Add(resetToken);
 
             return resetToken;
@@ -40,13 +43,17 @@ internal class PasswordServiceApp : WebApplicationFactory<Program>
     }
 
     public Mock<IEmailService> EmailService { get; }
-    
+
+    public IReadOnlyList<EmailMessageModel> ReceiverEmails => _emailMessageModels;
+
     public ISet<string> AuthTokens { get; } = new HashSet<string>();
 
-    public PasswordServiceApp()
+    public PasswordServiceApp(PasswordOptions? customOptions = default)
     {
+        _customOptions = customOptions;
         EmailService = new Mock<IEmailService>();
-        EmailService.Setup(x => x.SendTemplateEmail(It.IsAny<EmailMessageModel>()))
+        EmailService.Setup(x => x.Send(It.IsAny<EmailMessageModel>()))
+            .Callback<EmailMessageModel>(messageModel => _emailMessageModels.Add(messageModel))
             .Returns(Task.CompletedTask);
     }
 
@@ -60,6 +67,16 @@ internal class PasswordServiceApp : WebApplicationFactory<Program>
             x.AddScoped<IPasswordService>(x => new PasswordServiceWrapper(new SimplePasswordService(
                 x.GetRequiredService<IMemoryCache>(),
                 x.GetRequiredService<IOptions<PasswordOptions>>()), AuthTokens));
+
+            if (_customOptions != default)
+            {
+                x.RemoveAll<IOptions<PasswordOptions>>();
+                x.Configure<PasswordOptions>(options =>
+                {
+                    options.ResetPasswordTokenLifetime = _customOptions.ResetPasswordTokenLifetime;
+                    options.ResetTokenLength = _customOptions.ResetTokenLength;
+                });
+            }
         });
     }
 }

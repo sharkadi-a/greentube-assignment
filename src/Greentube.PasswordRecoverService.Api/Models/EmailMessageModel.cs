@@ -1,15 +1,25 @@
 namespace Greentube.PasswordService.Api.Models;
 
+/// <summary>
+/// E-mail message
+/// </summary>
 public class EmailMessageModel : IEquatable<EmailMessageModel>
 {
-    public EmailMessageModel(UserModel to, string body)
+    public EmailMessageModel(UserModel to, string htmlBody)
     {
         To = to;
-        Body = body;
+        HtmlBody = htmlBody;
     }
 
+    /// <summary>
+    /// Receiver of the E-mail
+    /// </summary>
     public UserModel To { get; }
-    public string Body { get; }
+    
+    /// <summary>
+    /// E-mail body as HTML
+    /// </summary>
+    public string HtmlBody { get; }
 
     public bool Equals(EmailMessageModel? other)
     {
@@ -23,7 +33,7 @@ public class EmailMessageModel : IEquatable<EmailMessageModel>
             return true;
         }
 
-        return To.Equals(other.To) && Body == other.Body;
+        return To.Equals(other.To) && HtmlBody == other.HtmlBody;
     }
 
     public override bool Equals(object? obj)
@@ -48,6 +58,6 @@ public class EmailMessageModel : IEquatable<EmailMessageModel>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(To, Body);
+        return HashCode.Combine(To, HtmlBody);
     }
 }

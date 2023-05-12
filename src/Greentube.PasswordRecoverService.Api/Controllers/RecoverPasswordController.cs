@@ -31,13 +31,13 @@ public class RecoverPasswordController : Controller
         _validator.ValidateEmail(email);
         
         var user = await _userService.GetUserByEmail(email);
-        var token = await _passwordService.GenerateResetToken(user);
+        var token = await _passwordService.GenerateTemporaryToken(user);
         
         var request = HttpContext.Request;
         var link = $"{request.Scheme}://{request.Host}{request.PathBase}/login/temp/{email}/{token}";
 
         var emailMessage = _emailFactory.CreateResetPasswordEmail(user, link);
-        await _emailService.SendTemplateEmail(emailMessage);
+        await _emailService.Send(emailMessage);
         return Ok();
     }
 }

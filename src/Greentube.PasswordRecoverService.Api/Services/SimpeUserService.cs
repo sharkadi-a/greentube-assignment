@@ -4,11 +4,11 @@ using Greentube.PasswordService.Api.Models;
 
 namespace Greentube.PasswordService.Api.Services;
 
-public class SimpeUserService : IUserService
+internal class SimpeUserService : IUserService
 {
     private readonly ISet<UserModel> _users = new HashSet<UserModel>();
 
-    public Task<UserModel> CreateUser(UserModel user)
+    public Task CreateUser(UserModel user)
     {
         _users.Add(user);
 

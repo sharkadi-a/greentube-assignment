@@ -4,7 +4,7 @@ using Greentube.PasswordService.Api.Exceptions;
 
 namespace Greentube.PasswordService.Api.Services;
 
-public class SimpleValidator : IValidator
+internal class SimpleValidator : IValidator
 {
     private readonly static Regex EmailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", RegexOptions.Compiled);
     

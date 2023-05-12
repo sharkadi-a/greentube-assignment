@@ -28,8 +28,9 @@ public class RecoverEmailTests
   
         // Assert
         response.IsSuccessStatusCode.ShouldBeTrue();
+        application.AuthTokens.Count.ShouldBe(1);
         application.EmailService.Verify(x =>
-                x.SendTemplateEmail(It.Is<EmailMessageModel>(x => x.To == user)),
+                x.Send(It.Is<EmailMessageModel>(x => x.To == user)),
             Times.Once);
     }      
     
@@ -52,8 +53,9 @@ public class RecoverEmailTests
     
         // Assert
         secondResponse.IsSuccessStatusCode.ShouldBeTrue();
+        application.AuthTokens.Count.ShouldBe(2);
         application.EmailService.Verify(x => 
-                x.SendTemplateEmail(It.Is<EmailMessageModel>(x => x.To == user)),
+                x.Send(It.Is<EmailMessageModel>(y => y.To == user)),
             Times.Exactly(2));
     }    
     
@@ -76,6 +78,7 @@ public class RecoverEmailTests
     
         // Assert
         response.IsSuccessStatusCode.ShouldBeFalse();
+        application.AuthTokens.ShouldBeEmpty();
         application.EmailService.VerifyNoOtherCalls();
     }
     
@@ -97,6 +100,7 @@ public class RecoverEmailTests
     
         // Assert
         response.IsSuccessStatusCode.ShouldBeFalse();
+        application.AuthTokens.ShouldBeEmpty();
         application.EmailService.VerifyNoOtherCalls();
     }
 }

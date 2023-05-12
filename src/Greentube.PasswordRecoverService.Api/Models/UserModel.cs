@@ -1,5 +1,8 @@
 namespace Greentube.PasswordService.Api.Models;
 
+/// <summary>
+/// A user
+/// </summary>
 public class UserModel : IEquatable<UserModel>
 {
     public UserModel(string name, string email)
@@ -8,7 +11,14 @@ public class UserModel : IEquatable<UserModel>
         Email = email;
     }
 
+    /// <summary>
+    /// User's name
+    /// </summary>
     public string Name { get; }
+    
+    /// <summary>
+    /// User's E-mail
+    /// </summary>
     public string Email { get;  }
 
     public bool Equals(UserModel? other)

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Greentube.PasswordService.Api.Middleware;
 
-public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
+internal class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     public override Task OnExceptionAsync(ExceptionContext context)
     {
