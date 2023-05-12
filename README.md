@@ -2,7 +2,7 @@
 
 The task was to implement a new .Net Core web service that allows players to log in in case they’ve forgotten their current password simply by knowing the email address they used at registration (which is unique for each player).
 
-## Security considerations
+## Vulnerability considerations
 
 * One potential vulnerability is unauthorized access to an email address, which could allow attackers to reset another person's password.
 * Additional authentication measures may be necessary to verify the person requesting the password reset is the actual account owner.
